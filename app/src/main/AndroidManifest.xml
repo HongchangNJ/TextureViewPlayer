@@ -10,7 +10,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.han.videodemo.MainActivity">
+        <activity android:name="com.han.videodemo.MainActivity"/>
+        <activity android:name=".ui.DemandActivity" />
+        <activity android:name=".ui.LiveActivity" />
+        <activity android:name=".ui.MainActivity2" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

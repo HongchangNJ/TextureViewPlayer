@@ -11,6 +11,8 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import com.han.videodemo.utils.ScreenUtils
 import com.han.videodemo.utils.UiUtils
+import com.han.videodemo.utils.VideoSizeUtils
+import com.qmuiteam.qmui.util.QMUIStatusBarHelper
 import tv.danmaku.ijk.media.player.IMediaPlayer
 import tv.danmaku.ijk.media.player.IjkMediaPlayer
 import java.lang.Exception
@@ -19,7 +21,7 @@ class MainActivity : AppCompatActivity(), TextureView.SurfaceTextureListener {
 
     val mUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
     val mLiveUrl = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
-    val m233 = "rtmp://192.168.1.26/live/233"
+    //val m233 = "rtmp://192.168.1.26/live/241"
 
     var mTextureView: TextureView? = null
 
@@ -34,6 +36,7 @@ class MainActivity : AppCompatActivity(), TextureView.SurfaceTextureListener {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
+        QMUIStatusBarHelper.translucent(this)
         initTextureView()
     }
 
@@ -94,22 +97,20 @@ class MainActivity : AppCompatActivity(), TextureView.SurfaceTextureListener {
                 }
             })*/
 
-            mIjkPlayer?.setOnVideoSizeChangedListener(object : IMediaPlayer.OnVideoSizeChangedListener {
-                override fun onVideoSizeChanged(p0: IMediaPlayer?, p1: Int, p2: Int, p3: Int, p4: Int) {
-                    mVideoWidth = p0?.videoWidth
-                    mVideoHeight = p0?.videoHeight
+            mIjkPlayer?.setOnVideoSizeChangedListener({ iMediaPlayer: IMediaPlayer, i: Int, i1: Int, i2: Int, i3: Int ->
+                mVideoWidth = iMediaPlayer?.videoWidth
+                mVideoHeight = iMediaPlayer?.videoHeight
 
-                    var screenWidth = ScreenUtils.getScreenWidth(this@MainActivity)
-                    var textureViewHeight  = mVideoHeight?.times(screenWidth)?.div(mVideoWidth as Int)
+                var viewSize = VideoSizeUtils.caculateViewSize(this@MainActivity,
+                        mVideoWidth as Int, mVideoHeight as Int)
 
-                    mTextureView?.post({
-                        var params = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
-                                textureViewHeight as Int)
-                        params.addRule(RelativeLayout.CENTER_IN_PARENT)
-                        mTextureView?.layoutParams = params
-                        mTextureView?.requestLayout()
-                    })
-                }
+                mTextureView?.post({
+                    var params = RelativeLayout.LayoutParams(viewSize?.width as Int,
+                            viewSize?.height)
+                    params.addRule(RelativeLayout.CENTER_IN_PARENT)
+                    mTextureView?.layoutParams = params
+                    mTextureView?.requestLayout()
+                })
             })
 
             mIjkPlayer?.setOnPreparedListener(object : IMediaPlayer.OnPreparedListener {
