@@ -17,6 +17,7 @@ import com.han.videodemo.utils.VideoSizeUtils
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper
 import tv.danmaku.ijk.media.player.IMediaPlayer
 import tv.danmaku.ijk.media.player.IjkMediaPlayer
+import tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_PLAYER
 
 /**
  * created by HanHongchang
@@ -26,7 +27,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer
 class LiveActivity : AppCompatActivity(), TextureView.SurfaceTextureListener {
     lateinit var mTextureView: TextureView
     lateinit var mMediaPlayer: IjkMediaPlayer
-    val mLiveUrl = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
+    val mLiveUrl = "rtmp://192.168.1.26/live/243";
 
 
 
@@ -54,6 +55,16 @@ class LiveActivity : AppCompatActivity(), TextureView.SurfaceTextureListener {
 
     private fun startPlay(surface: Surface) {
         mMediaPlayer = IjkMediaPlayer()
+        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "analyzemaxduration", 0L);
+        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "probesize", 10240L);
+        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "flush_packets", 1L);
+        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 0);
+        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_frame", 0);
+        mMediaPlayer.setOption(OPT_CATEGORY_PLAYER, "packet-buffering", 0L);
+        mMediaPlayer.setOption(OPT_CATEGORY_PLAYER, "framedrop", 1L);
+        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "max_cached_duration", 0);
+        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "infbuf", 1);
+
         mMediaPlayer.setDataSource(mLiveUrl)
         mMediaPlayer.setSurface(surface)
         mMediaPlayer.setOnVideoSizeChangedListener({ iMediaPlayer: IMediaPlayer, i: Int, i1: Int, i2: Int, i3: Int ->
@@ -62,6 +73,7 @@ class LiveActivity : AppCompatActivity(), TextureView.SurfaceTextureListener {
             var params = mTextureView.layoutParams
             params.width = viewSize.width
             params.height = viewSize.height
+            mTextureView.layoutParams = params
         })
         mMediaPlayer.setScreenOnWhilePlaying(true)
 
